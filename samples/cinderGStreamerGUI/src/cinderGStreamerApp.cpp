@@ -77,6 +77,7 @@ private:
 	float																	m_fSeekPos;
 	float																	m_fOldSeekPos;
 	float																	m_fSpeed;
+	float																	m_fVolume;
 	int																		m_iLoopMode;
 	int																		m_iTilesDivisor;
 	int																		m_iTileWidth;
@@ -103,6 +104,7 @@ void cinderGStreamerApp::setup()
 	m_dLastTime = 0;
 	m_iCurrentVideo = 0;
 	m_fSpeed = 1;
+	m_fVolume = 1;
 	m_iLoopMode = LoopMode::LOOP;
 	m_iTilesDivisor = 1;
 	m_fSeekPos = m_fOldSeekPos = 0;
@@ -132,6 +134,7 @@ void cinderGStreamerApp::update()
 
 	m_Players[m_iCurrentVideo]->setSpeed(m_fSpeed);
 	m_Players[m_iCurrentVideo]->setLoopMode((LoopMode)m_iLoopMode);
+	m_Players[m_iCurrentVideo]->setVolume(m_fVolume);
 	
 	updateGui();
 
@@ -350,6 +353,7 @@ void cinderGStreamerApp::setupGui()
 	m_Gui.addParam("speed", &m_fSpeed, "min=0 max=8.0 step=0.05");
 	m_Gui.addParam("0..none, 1..loop, 2..loopBidi", &m_iLoopMode, "min=0 max=2 step=1");
 	m_Gui.addParam("seek frame", &m_fSeekPos, "min=0.0 max=1.0 step=0.01");
+	m_Gui.addParam("volume", &m_fVolume, "min=0.0 max=1.0 step=0.01");
 }
 
 int	cinderGStreamerApp::calcTileDivisor(int size)

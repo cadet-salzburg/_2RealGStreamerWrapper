@@ -169,6 +169,7 @@ bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer,
 	m_dDurationInMs = 0;
 	m_iNumberOfFrames = 0;
 
+	m_fVolume = 1.0f;
 	m_fSpeed = 1.0f;
 	m_PlayDirection = FORWARD;
 	m_CurrentPlayState = NOT_INITIALIZED;
@@ -645,6 +646,20 @@ ContentType GStreamerWrapper::getContentType()
 	return m_ContentType;
 }
 
+void GStreamerWrapper::setVolume( float fVolume )
+{
+	if ( m_fVolume != fVolume )
+	{
+		m_fVolume = fVolume;
+		if ( m_fVolume < 0.0f )
+			m_fVolume = 0.0f;
+		else if ( m_fVolume > 1.0f )
+			m_fVolume = 1.0f;
+
+		g_object_set( m_GstPipeline, "volume", m_fVolume, NULL );
+	}
+}
+
 unsigned char* GStreamerWrapper::getAudio()
 {
 	return m_cAudioBuffer;
@@ -678,6 +693,11 @@ int GStreamerWrapper::getAudioDecodeBufferSize()
 int GStreamerWrapper::getAudioWidth()
 {
 	return m_iAudioWidth;
+}
+
+float GStreamerWrapper::getCurrentVolume()
+{
+	return m_fVolume;
 }
 
 Endianness GStreamerWrapper::getAudioEndianness()

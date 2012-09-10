@@ -443,6 +443,15 @@ namespace _2RealGStreamerWrapper
 		////////////////////////////////////////////////////////////////////////// AUDIO
 
 		/*
+			Sets the Pipeline volume
+
+			params:
+			@fVolume: The new volume value which will be immediately applied to the Pipeline. Any value between 0.0f and 1.0f are possible.
+			Negative values will be clamped to 0.0f and values greater than 1.0f to 1.0f.
+		*/
+		void					setVolume( float fVolume );
+
+		/*
 			Returns an unsigned char pointer containing a buffer to the currently decoded audio data
 			Returns NULL if there is either no audio stream in the media file, no file has been loaded or something went wrong
 			while streaming
@@ -478,6 +487,11 @@ namespace _2RealGStreamerWrapper
 			Returns the audio width (8, 16, 24 or 32)
 		*/
 		int						getAudioWidth();
+
+		/*
+			Returns the current volume value
+		*/
+		float					getCurrentVolume();
 
 		/*
 			Returns the Endianness of the audio stream
@@ -641,6 +655,7 @@ namespace _2RealGStreamerWrapper
 		int						m_iAudioDecodeBufferSize; /* Size of the audio buffer without the channels and audio width */
 		int						m_iAudioBufferSize; /* Size of the audio buffer */
 		int						m_iAudioWidth; /* Width of the audio data (8, 16, 24 or 32) */
+		float					m_fVolume; /* Volume of the pipeline */
 		float					m_fFps; /* Frames per second of the video */
 		float					m_fSpeed; /* The current playback speed */
 		double					m_dCurrentTimeInMs; /* Current time position in milliseconds */
