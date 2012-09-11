@@ -10,16 +10,26 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "_2RealGStreamerWrapper", "_
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_MTD|Win32 = Debug_MTD|Win32
 		Debug|Win32 = Debug|Win32
+		Release_MTD|Win32 = Release_MTD|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{89941991-9EF9-411D-B5BD-4DC9EC53BD36}.Debug_MTD|Win32.ActiveCfg = Debug|Win32
+		{89941991-9EF9-411D-B5BD-4DC9EC53BD36}.Debug_MTD|Win32.Build.0 = Debug|Win32
 		{89941991-9EF9-411D-B5BD-4DC9EC53BD36}.Debug|Win32.ActiveCfg = Debug|Win32
 		{89941991-9EF9-411D-B5BD-4DC9EC53BD36}.Debug|Win32.Build.0 = Debug|Win32
+		{89941991-9EF9-411D-B5BD-4DC9EC53BD36}.Release_MTD|Win32.ActiveCfg = Release|Win32
+		{89941991-9EF9-411D-B5BD-4DC9EC53BD36}.Release_MTD|Win32.Build.0 = Release|Win32
 		{89941991-9EF9-411D-B5BD-4DC9EC53BD36}.Release|Win32.ActiveCfg = Release|Win32
 		{89941991-9EF9-411D-B5BD-4DC9EC53BD36}.Release|Win32.Build.0 = Release|Win32
+		{F26DFEA1-26E6-4EDB-9390-F83D0B15E9F0}.Debug_MTD|Win32.ActiveCfg = Debug_MTD|Win32
+		{F26DFEA1-26E6-4EDB-9390-F83D0B15E9F0}.Debug_MTD|Win32.Build.0 = Debug_MTD|Win32
 		{F26DFEA1-26E6-4EDB-9390-F83D0B15E9F0}.Debug|Win32.ActiveCfg = Debug|Win32
 		{F26DFEA1-26E6-4EDB-9390-F83D0B15E9F0}.Debug|Win32.Build.0 = Debug|Win32
+		{F26DFEA1-26E6-4EDB-9390-F83D0B15E9F0}.Release_MTD|Win32.ActiveCfg = Release_MTD|Win32
+		{F26DFEA1-26E6-4EDB-9390-F83D0B15E9F0}.Release_MTD|Win32.Build.0 = Release_MTD|Win32
 		{F26DFEA1-26E6-4EDB-9390-F83D0B15E9F0}.Release|Win32.ActiveCfg = Release|Win32
 		{F26DFEA1-26E6-4EDB-9390-F83D0B15E9F0}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
