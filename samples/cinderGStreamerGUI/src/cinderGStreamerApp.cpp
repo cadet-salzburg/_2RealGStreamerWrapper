@@ -142,9 +142,7 @@ void cinderGStreamerApp::update()
 	if(m_fSeekPos != m_fOldSeekPos)
 	{
 		m_fOldSeekPos = m_fSeekPos;
-		m_Players[m_iCurrentVideo]->play();
 		m_Players[m_iCurrentVideo]->setPosition(m_fSeekPos);
-		m_Players[m_iCurrentVideo]->pause();
 	}
 
 	m_iTilesDivisor = calcTileDivisor(m_Players.size());
@@ -305,7 +303,7 @@ void cinderGStreamerApp::updateGui()
 void cinderGStreamerApp::setupGui()
 {
 	std::stringstream strTmp;
-	m_Gui = ci::params::InterfaceGl("GStreamer Player", ci::Vec2i(300,380));
+	m_Gui = ci::params::InterfaceGl("GStreamer Player", ci::Vec2i(300,450));
 
 	// Video / Audio Infos
 	m_Gui.addButton( "open", std::bind( &cinderGStreamerApp::open, this ) );
