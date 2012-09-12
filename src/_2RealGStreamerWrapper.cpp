@@ -18,7 +18,7 @@
 	limitations under the License.
 
 	CADET - Center for Advances in Digital Entertainment Technologies
-	 
+
 	Authors: Steven Stojanovic, Robert Praxmarer
 	Web: http://www.1n0ut.com
 	Email: stevesparrow07@googlemail.com, support@cadet.at
@@ -48,8 +48,13 @@
  * Boston, MA 02111-1307, USA.
  */
 
-
-#include "..\include\_2RealGStreamerWrapper.h"
+#ifdef LINUX
+    #include <math.h>
+    #include <cstring>
+    #include "_2RealGStreamerWrapper.h"
+#else
+    #include "..\include\_2RealGStreamerWrapper.h"
+#endif
 
 #include <iostream>
 
@@ -57,7 +62,7 @@ namespace _2RealGStreamerWrapper
 {
 
 /* this code is for making use of threads for the message handling, so you don't have to call update manually
-   but this introduces a dependency to boost::thread so it's up to you what you prefer, it shouldn't make much 
+   but this introduces a dependency to boost::thread so it's up to you what you prefer, it shouldn't make much
    difference in practical terms */
 #ifdef THREADED_MESSAGE_HANDLER
 gboolean onHandleGstMessages(GstBus *bus, GstMessage *msg, gpointer data)
@@ -116,26 +121,26 @@ void threadedMessageHandler(GStreamerWrapper* obj)
 
 GStreamerWrapper::GStreamerWrapper() :
 	m_bFileIsOpen( false ),
+	m_cVideoBuffer( NULL ),
+	m_cAudioBuffer( NULL ),
 	m_GstPipeline( NULL ),
 	m_GstVideoSink( NULL ),
 	m_GstAudioSink( NULL ),
-	m_GstBus( NULL ),
-	m_cVideoBuffer( NULL ),
-	m_cAudioBuffer( NULL )
+	m_GstBus( NULL )
 {
 	gst_init( NULL, NULL );
-	
+
 	m_CurrentPlayState = NOT_INITIALIZED;
 }
 
 GStreamerWrapper::GStreamerWrapper( std::string strFilename, bool bGenerateVideoBuffer, bool bGenerateAudioBuffer ) :
 	m_bFileIsOpen( false ),
+	m_cVideoBuffer( NULL ),
+	m_cAudioBuffer( NULL ),
 	m_GstPipeline( NULL ),
 	m_GstVideoSink( NULL ),
 	m_GstAudioSink( NULL ),
-	m_GstBus( NULL ),
-	m_cVideoBuffer( NULL ),
-	m_cAudioBuffer( NULL )
+	m_GstBus( NULL )
 {
 	gst_init( NULL, NULL );
 
@@ -183,7 +188,7 @@ bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer,
 	}
 
 #ifdef THREADED_MESSAGE_HANDLER
-		m_MsgHandlingThread = boost::thread( boost::bind(threadedMessageHandler, this)); 
+		m_MsgHandlingThread = boost::thread( boost::bind(threadedMessageHandler, this));
 #endif
 
 
@@ -246,6 +251,9 @@ bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer,
 #ifdef _WIN32 // Use direct show as playback plugin if on Windows; Needed for features like play direction and playback speed to work correctly
 		GstElement* videoSink = gst_element_factory_make( "directdrawsink", NULL );
 		g_object_set( m_GstPipeline, "video-sink", videoSink, NULL );
+#elifdef LINUX
+        GstElement* videoSink = gst_element_factory_make( "xvimagesink", NULL );    //possible alternatives: ximagesink (no (gpu) fancy stuff) or better: cluttersink
+		g_object_set( m_GstPipeline, "video-sink", videoSink, NULL );
 #else // Use Mac OSX plugin otherwise
 		GstElement* videoSink = gst_element_factory_make( "osxvideosink", NULL );
 		g_object_set( m_GstPipeline, "video-sink", videoSink, NULL );
@@ -274,6 +282,9 @@ bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer,
 	{
 #ifdef _WIN32 // Use direct sound plugin if on Windows; Needed for features like play direction and playback speed to work correctly
 		GstElement* audioSink = gst_element_factory_make( "directsoundsink", NULL );
+		g_object_set ( m_GstPipeline, "audio-sink", audioSink, NULL );
+#elifdef LINUX
+		GstElement* audioSink = gst_element_factory_make( "pulsesink", NULL );  //alternative: alsasink
 		g_object_set ( m_GstPipeline, "audio-sink", audioSink, NULL );
 #else // Use Mac OSC plugin otherwise
 		GstElement* audioSink = gst_element_factory_make( "osxaudiosink", NULL );
@@ -386,7 +397,7 @@ void GStreamerWrapper::stop()
 	{
 		// "Hack" for stopping ...
 		gst_element_set_state( m_GstPipeline, GST_STATE_PAUSED );
-		
+
 		if ( m_PlayDirection == FORWARD )
 			seekFrame( 0 );
 		else if ( m_PlayDirection == BACKWARD )
@@ -713,7 +724,7 @@ bool GStreamerWrapper::seekFrame( gint64 iTargetTimeInNs )
 	GstSeekFlags gstSeekFlags = ( GstSeekFlags ) ( GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH );
 
 	bool bIsSeekSuccessful = false;
-	
+
 	if ( m_PlayDirection == FORWARD )
 	{
 		bIsSeekSuccessful = gst_element_seek( GST_ELEMENT( m_GstPipeline ),
@@ -820,7 +831,7 @@ void GStreamerWrapper::retrieveVideoInfo()
 
 			// FPS
 			m_fFps = (float)iFpsNumerator / (float)iFpsDenominator;
-			
+
 
 			gst_object_unref( gstPad );
 		}
@@ -938,7 +949,7 @@ void GStreamerWrapper::newVideoSinkPrerollCallback( GstBuffer* videoSinkBuffer )
 {
 	// Allocate memory for the video pixels according to the vide appsink buffer size
 	if ( m_cVideoBuffer == NULL )
-	{	
+	{
 		m_bIsNewVideoFrame = true;
 		gint64 videoBufferSize = GST_BUFFER_SIZE( videoSinkBuffer );
 		m_cVideoBuffer = new unsigned char[videoBufferSize];
@@ -958,7 +969,7 @@ void GStreamerWrapper::newVideoSinkBufferCallback( GstBuffer* videoSinkBuffer )
 
 void GStreamerWrapper::videoEosCallback()
 {
-	
+
 }
 
 void GStreamerWrapper::newAudioSinkPrerollCallback( GstBuffer* audioSinkBuffer )
@@ -1052,7 +1063,7 @@ void GStreamerWrapper::newAudioSinkBufferCallback( GstBuffer* audioSinkBuffer )
 
 void GStreamerWrapper::audioEosCallback()
 {
-	
+
 }
 
 

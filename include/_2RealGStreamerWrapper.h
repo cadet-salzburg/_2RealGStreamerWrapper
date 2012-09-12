@@ -18,7 +18,7 @@
 	limitations under the License.
 
 	CADET - Center for Advances in Digital Entertainment Technologies
-	 
+
 	Authors: Steven Stojanovic, Robert Praxmarer
 	Web: http://www.1n0ut.com
 	Email: stevesparrow07@googlemail.com, support@cadet.at
@@ -128,6 +128,10 @@ namespace _2RealGStreamerWrapper
 
 		Enumeration to describe the byte order (big endian = 4321 / little endian = 1234) of either video or audio stream
 	*/
+	#ifdef LINUX    //NOTE: I don't really like this here but it's necessary. Go here if you have probs with constants defs (ottona)
+        #undef BIG_ENDIAN
+        #undef LITTLE_ENDIAN
+    #endif
 	enum Endianness
 	{
 		BIG_ENDIAN = 4321,
@@ -316,7 +320,7 @@ namespace _2RealGStreamerWrapper
 		*/
 		void					setPosition( float fPos );
 
-	
+
 		/*
 			Returns true if the loaded media file contains at least one video stream, false otherwise
 		*/
@@ -386,7 +390,7 @@ namespace _2RealGStreamerWrapper
 		float					getSpeed();
 
 		/*
-			Returns the current percentaged position of the stream which is a value between 0.0f (= 0 percent) and 1.0f (= 100 percent) 
+			Returns the current percentaged position of the stream which is a value between 0.0f (= 0 percent) and 1.0f (= 100 percent)
 		*/
 		float					getPosition();
 
@@ -439,7 +443,7 @@ namespace _2RealGStreamerWrapper
 			Returns type of content of the loaded media file
 		*/
 		ContentType				getContentType();
-	
+
 		////////////////////////////////////////////////////////////////////////// AUDIO
 
 		/*
