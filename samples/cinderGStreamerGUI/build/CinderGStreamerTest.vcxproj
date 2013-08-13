@@ -24,10 +24,12 @@
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -53,7 +55,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(_2REAL_DEPENDENCIES_DIR)\fmod\include;$(_2REAL_DEPENDENCIES_DIR)\gstreamer\include;$(_2REAL_DEPENDENCIES_DIR)\cinder\include;$(_2REAL_DEPENDENCIES_DIR)\boost\include;..\..\..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(_2REAL_DEPENDENCIES_DIR)\fmod\include;$(_2REAL_DEPENDENCIES_DIR)\gstreamer\include;$(_2REAL_DEPENDENCIES_DIR)\cinder_0.8.5_vc2012\include;$(_2REAL_DEPENDENCIES_DIR)\cinder_0.8.5_vc2012\boost;..\..\..\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -65,7 +67,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>_2RealGStreamerWrapper_mt_32sd.lib;cinder_d.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(BOOST_DIR)\lib;$(CINDER_DIR)\lib;$(CINDER_DIR)\lib\msw;..\..\..\lib;$(FMOD_DIR)\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(_2REAL_DEPENDENCIES_DIR)\cinder_0.8.5_vc2012\boost;$(_2REAL_DEPENDENCIES_DIR)\cinder_0.8.5_vc2012\lib;$(_2REAL_DEPENDENCIES_DIR)\cinder_0.8.5_vc2012\lib\msw;..\..\..\lib;$(_2REAL_DEPENDENCIES_DIR)\fmod\lib</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -77,7 +79,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(_2REAL_DEPENDENCIES_DIR)\fmod\include;$(_2REAL_DEPENDENCIES_DIR)\gstreamer\include;$(_2REAL_DEPENDENCIES_DIR)\cinder\include;$(_2REAL_DEPENDENCIES_DIR)\boost\include;..\..\..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(_2REAL_DEPENDENCIES_DIR)\fmod\include;$(_2REAL_DEPENDENCIES_DIR)\gstreamer\include;$(_2REAL_DEPENDENCIES_DIR)\cinder_0.8.5_vc2012\include;$(_2REAL_DEPENDENCIES_DIR)\cinder_0.8.5_vc2012\boost;..\..\..\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
@@ -87,7 +89,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>_2RealGStreamerWrapper_mt_32s.lib;cinder.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(BOOST_DIR)\lib;$(CINDER_DIR)\lib;$(CINDER_DIR)\lib\msw;..\..\..\lib;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(_2REAL_DEPENDENCIES_DIR)\cinder_0.8.5_vc2012\boost\lib;$(_2REAL_DEPENDENCIES_DIR)\cinder_0.8.5_vc2012\lib;$(_2REAL_DEPENDENCIES_DIR)\cinder_0.8.5_vc2012\lib\msw;..\..\..\lib;$(_2REAL_DEPENDENCIES_DIR)\fmod\lib</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>

@@ -62,8 +62,7 @@ namespace _2RealGStreamerWrapper
 {
 
 /* this code is for making use of threads for the message handling, so you don't have to call update manually
-   but this introduces a dependency to boost::thread so it's up to you what you prefer, it shouldn't make much
-   difference in practical terms */
+*/
 #ifdef THREADED_MESSAGE_HANDLER
 gboolean onHandleGstMessages(GstBus *bus, GstMessage *msg, gpointer data)
 {
@@ -155,14 +154,20 @@ GStreamerWrapper::~GStreamerWrapper()
 
 bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer, bool bGenerateAudioBuffer )
 {
+	if( m_bFileIsOpen )
+	{
+		stop();
+		close();
+	}
+
 	// init property variables
 	m_iNumVideoStreams = 0;
 	m_iNumAudioStreams = 0;
 	m_iCurrentVideoStream = 0;
 	m_iCurrentAudioStream = 0;
 	m_iWidth = m_iHeight = 0;
-	m_iCurrentFrameNumber = 0;	// set to invalid, as it is not decoded yet
-	m_dCurrentTimeInMs = 0;	// set to invalid, as it is not decoded yet
+	m_iCurrentFrameNumber = 0;		// set to invalid, as it is not decoded yet
+	m_dCurrentTimeInMs = 0;			// set to invalid, as it is not decoded yet
 	m_bIsAudioSigned = false;
 	m_bIsNewVideoFrame = false;
 	m_iNumAudioChannels = 0;
@@ -181,14 +186,8 @@ bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer,
 	m_LoopMode = LOOP;
 	m_strFilename = strFilename;
 
-	if( m_bFileIsOpen )
-	{
-		stop();
-		close();
-	}
-
 #ifdef THREADED_MESSAGE_HANDLER
-		m_MsgHandlingThread = boost::thread( boost::bind(threadedMessageHandler, this));
+		m_MsgHandlingThread = std::thread( std::bind( threadedMessageHandler, this ) );
 #endif
 
 
@@ -248,11 +247,11 @@ bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer,
 	}
 	else
 	{
-#ifdef _WIN32 // Use direct show as playback plugin if on Windows; Needed for features like play direction and playback speed to work correctly
+#if defined _WIN32 // Use direct show as playback plugin if on Windows; Needed for features like play direction and playback speed to work correctly
 		GstElement* videoSink = gst_element_factory_make( "directdrawsink", NULL );
 		g_object_set( m_GstPipeline, "video-sink", videoSink, NULL );
-#elifdef LINUX
-        GstElement* videoSink = gst_element_factory_make( "xvimagesink", NULL );    //possible alternatives: ximagesink (no (gpu) fancy stuff) or better: cluttersink
+#elif defined LINUX
+		GstElement* videoSink = gst_element_factory_make( "xvimagesink", NULL );    //possible alternatives: ximagesink (no (gpu) fancy stuff) or better: cluttersink
 		g_object_set( m_GstPipeline, "video-sink", videoSink, NULL );
 #else // Use Mac OSX plugin otherwise
 		GstElement* videoSink = gst_element_factory_make( "osxvideosink", NULL );
@@ -280,10 +279,10 @@ bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer,
 	}
 	else
 	{
-#ifdef _WIN32 // Use direct sound plugin if on Windows; Needed for features like play direction and playback speed to work correctly
+#if defined _WIN32 // Use direct sound plugin if on Windows; Needed for features like play direction and playback speed to work correctly
 		GstElement* audioSink = gst_element_factory_make( "directsoundsink", NULL );
 		g_object_set ( m_GstPipeline, "audio-sink", audioSink, NULL );
-#elifdef LINUX
+#elif defined LINUX
 		GstElement* audioSink = gst_element_factory_make( "pulsesink", NULL );  //alternative: alsasink
 		g_object_set ( m_GstPipeline, "audio-sink", audioSink, NULL );
 #else // Use Mac OSC plugin otherwise
@@ -427,6 +426,8 @@ void GStreamerWrapper::printMediaFileInfo()
 
 	if ( m_iNumVideoStreams > 0 )
 	{
+		std::lock_guard< std::mutex > lock( m_VideoMutex );
+
 		std::cout << std::endl << "Video Information ..." << std::endl;
 		std::cout << "> Number of Frames: " << m_iNumberOfFrames << std::endl;
 		std::cout << "> Video Width: " << m_iWidth << std::endl;
@@ -436,6 +437,8 @@ void GStreamerWrapper::printMediaFileInfo()
 
 	if ( m_iNumAudioStreams > 0 )
 	{
+		std::lock_guard< std::mutex > lock( m_AudioMutex );
+
 		std::cout << std::endl << "Audio Information ..." << std::endl;
 		std::cout << "> Sample Rate: " << m_iAudioSampleRate << std::endl;
 		std::cout << "> Channels: " << m_iNumAudioChannels << std::endl;
@@ -550,6 +553,8 @@ std::string GStreamerWrapper::getFileName()
 
 unsigned char* GStreamerWrapper::getVideo()
 {
+	std::lock_guard< std::mutex > lock( m_VideoMutex );
+
 	m_bIsNewVideoFrame = false;
 	return m_cVideoBuffer;
 }
@@ -586,6 +591,8 @@ unsigned int GStreamerWrapper::getHeight()
 
 bool GStreamerWrapper::isNewVideoFrame()
 {
+	std::lock_guard< std::mutex > lock( m_VideoMutex );
+
 	return m_bIsNewVideoFrame;
 }
 
@@ -673,36 +680,50 @@ void GStreamerWrapper::setVolume( float fVolume )
 
 unsigned char* GStreamerWrapper::getAudio()
 {
+	std::lock_guard< std::mutex > lock( m_AudioMutex );
+
 	return m_cAudioBuffer;
 }
 
 bool GStreamerWrapper::getIsAudioSigned()
 {
+	std::lock_guard< std::mutex > lock( m_AudioMutex );
+
 	return m_bIsAudioSigned;
 }
 
 int	GStreamerWrapper::getNumOfAudioChannels()
 {
+	std::lock_guard< std::mutex > lock( m_AudioMutex );
+
 	return m_iNumAudioChannels;
 }
 
 int GStreamerWrapper::getAudioSampleRate()
 {
+	std::lock_guard< std::mutex > lock( m_AudioMutex );
+
 	return m_iAudioSampleRate;
 }
 
 int GStreamerWrapper::getAudioBufferSize()
 {
+	std::lock_guard< std::mutex > lock( m_AudioMutex );
+
 	return m_iAudioBufferSize;
 }
 
 int GStreamerWrapper::getAudioDecodeBufferSize()
 {
+	std::lock_guard< std::mutex > lock( m_AudioMutex );
+
 	return m_iAudioDecodeBufferSize;
 }
 
 int GStreamerWrapper::getAudioWidth()
 {
+	std::lock_guard< std::mutex > lock( m_AudioMutex );
+
 	return m_iAudioWidth;
 }
 
@@ -713,6 +734,8 @@ float GStreamerWrapper::getCurrentVolume()
 
 Endianness GStreamerWrapper::getAudioEndianness()
 {
+	std::lock_guard< std::mutex > lock( m_AudioMutex );
+
 	return m_AudioEndianness;
 }
 
@@ -947,6 +970,8 @@ GstFlowReturn GStreamerWrapper::onNewBufferFromAudioSource( GstAppSink* appsink,
 
 void GStreamerWrapper::newVideoSinkPrerollCallback( GstBuffer* videoSinkBuffer )
 {
+	std::lock_guard< std::mutex > lock( m_VideoMutex );
+
 	// Allocate memory for the video pixels according to the vide appsink buffer size
 	if ( m_cVideoBuffer == NULL )
 	{
@@ -961,6 +986,8 @@ void GStreamerWrapper::newVideoSinkPrerollCallback( GstBuffer* videoSinkBuffer )
 
 void GStreamerWrapper::newVideoSinkBufferCallback( GstBuffer* videoSinkBuffer )
 {
+	std::lock_guard< std::mutex > lock( m_VideoMutex );
+
 	m_bIsNewVideoFrame = true;
 
 	// Copy the video appsink buffer data to our unsigned char array
@@ -974,6 +1001,8 @@ void GStreamerWrapper::videoEosCallback()
 
 void GStreamerWrapper::newAudioSinkPrerollCallback( GstBuffer* audioSinkBuffer )
 {
+	std::lock_guard< std::mutex > lock( m_AudioMutex );
+
 	if ( m_cAudioBuffer == NULL )
 	{
 		m_iAudioBufferSize = GST_BUFFER_SIZE( audioSinkBuffer );
@@ -1041,6 +1070,8 @@ void GStreamerWrapper::newAudioSinkPrerollCallback( GstBuffer* audioSinkBuffer )
 
 void GStreamerWrapper::newAudioSinkBufferCallback( GstBuffer* audioSinkBuffer )
 {
+	std::lock_guard< std::mutex > lock( m_AudioMutex );
+
 	// The Audio Buffer size may change during runtime so we keep track if the buffer changes
 	// If so, delete the old buffer and re-allocate it with the respective new buffer size
 	int bufferSize = GST_BUFFER_SIZE( audioSinkBuffer );

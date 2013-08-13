@@ -51,12 +51,7 @@
 #pragma once
 
 // us this for threaded message handling so you don't need update, but it needs a dependency for boost threads...
-//#define THREADED_MESSAGE_HANDLER
-
-#ifdef THREADED_MESSAGE_HANDLER
-	#include <boost/thread.hpp>
-	#include <glib.h>
-#endif
+#define THREADED_MESSAGE_HANDLER
 
 #include <gst/gst.h>
 #include <gst/gstbin.h>
@@ -65,6 +60,8 @@
 #include <gst/audio/audio.h>
 
 #include <string>
+#include <mutex>
+#include <thread>
 
 namespace _2RealGStreamerWrapper
 {
@@ -686,9 +683,12 @@ namespace _2RealGStreamerWrapper
 		GstAppSinkCallbacks		m_GstVideoSinkCallbacks; /* Stores references to the callback methods for video preroll, new video buffer and video eos */
 		GstAppSinkCallbacks		m_GstAudioSinkCallbacks; /* Stores references to the callback methods for audio preroll, new audio buffer and audio eos */
 
+		std::mutex				m_VideoMutex;
+		std::mutex				m_AudioMutex;
+
 #ifdef THREADED_MESSAGE_HANDLER
 		friend					void threadedMessageHandler(GStreamerWrapper* obj); /* need for accessing private stuff in the threaded global function */
-		boost::thread			m_MsgHandlingThread;
+		std::thread				m_MsgHandlingThread;
 		GMainLoop*				m_GMainLoop;
 #endif
 	};
