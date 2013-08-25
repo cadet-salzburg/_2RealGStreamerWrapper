@@ -135,6 +135,9 @@ namespace _2RealGStreamerWrapper
 		LITTLE_ENDIAN = 1234
 	};
 
+    class GStreamerWrapper;
+    typedef std::shared_ptr< GStreamerWrapper > GStreamerWrapperRef;
+
 	/*
 		class _2RealGStreamerWrapper
 
@@ -148,6 +151,19 @@ namespace _2RealGStreamerWrapper
 	class GStreamerWrapper
 	{
 	public:
+        /*
+            Factory that builds a heap-allocated GStreamer
+        */
+        static GStreamerWrapperRef create()
+        { return (GStreamerWrapperRef)(new GStreamerWrapper()); }
+
+        /*
+            Factory that builds a heap-allocated GStreamer, and automatically opens the file provided by the string parameter.
+        */
+        static GStreamerWrapperRef create( std::string strFilename, bool bGenerateVideoBuffer = true, bool bGenerateAudioBuffer = true )
+        { return (GStreamerWrapperRef)(new GStreamerWrapper( strFilename, bGenerateVideoBuffer, bGenerateAudioBuffer )); }
+
+
 		/*
 			Constructor that initializes GStreamer
 		*/
