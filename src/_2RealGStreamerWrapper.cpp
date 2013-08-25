@@ -48,7 +48,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifdef LINUX
+#ifndef WIN32
     #include <math.h>
     #include <cstring>
     #include "_2RealGStreamerWrapper.h"

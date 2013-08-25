@@ -125,7 +125,7 @@ namespace _2RealGStreamerWrapper
 
 		Enumeration to describe the byte order (big endian = 4321 / little endian = 1234) of either video or audio stream
 	*/
-	#ifdef LINUX    //NOTE: I don't really like this here but it's necessary. Go here if you have probs with constants defs (ottona)
+	#ifndef WIN32    //NOTE: I don't really like this here but it's necessary. Go here if you have probs with constants defs (ottona)
         #undef BIG_ENDIAN
         #undef LITTLE_ENDIAN
     #endif
