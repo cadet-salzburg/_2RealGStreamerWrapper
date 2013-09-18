@@ -48,7 +48,7 @@ mVideoTex( nullptr )
 void
 GStreamerXcodeApp::setup()
 {
-    mPlayer = GStreamerWrapper::create( "file:///Users/Ian/Desktop/trailer.mov" );
+    mPlayer = GStreamerWrapper::create( "http://video.webmfiles.org/big-buck-bunny_trailer.webm" );
     mPlayer->play();
 }
 
