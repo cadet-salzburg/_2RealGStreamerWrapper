@@ -48,7 +48,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifdef LINUX
+#ifndef WIN32
     #include <math.h>
     #include <cstring>
     #include "_2RealGStreamerWrapper.h"
@@ -213,6 +213,7 @@ bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer,
 	{
 		// Create the video appsink and configure it
 		m_GstVideoSink = gst_element_factory_make( "appsink", "videosink" );
+        gst_object_ref( m_GstVideoSink );
 		gst_base_sink_set_sync( GST_BASE_SINK( m_GstVideoSink ), true );
 		gst_app_sink_set_max_buffers( GST_APP_SINK( m_GstVideoSink ), 8 );
 		gst_app_sink_set_drop( GST_APP_SINK( m_GstVideoSink ),true );
@@ -265,6 +266,7 @@ bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer,
 	{
 		// Create and configure audio appsink
 		m_GstAudioSink = gst_element_factory_make( "appsink", "audiosink" );
+        gst_object_ref( m_GstAudioSink );
 		gst_base_sink_set_sync( GST_BASE_SINK( m_GstAudioSink ), true );
 		// Set the configured audio appsink to the main pipeline
 		g_object_set( m_GstPipeline, "audio-sink", m_GstAudioSink, (void*)NULL );

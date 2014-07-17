@@ -125,7 +125,7 @@ namespace _2RealGStreamerWrapper
 
 		Enumeration to describe the byte order (big endian = 4321 / little endian = 1234) of either video or audio stream
 	*/
-	#ifdef LINUX    //NOTE: I don't really like this here but it's necessary. Go here if you have probs with constants defs (ottona)
+	#ifndef WIN32    //NOTE: I don't really like this here but it's necessary. Go here if you have probs with constants defs (ottona)
         #undef BIG_ENDIAN
         #undef LITTLE_ENDIAN
     #endif
@@ -134,6 +134,9 @@ namespace _2RealGStreamerWrapper
 		BIG_ENDIAN = 4321,
 		LITTLE_ENDIAN = 1234
 	};
+
+    class GStreamerWrapper;
+    typedef std::shared_ptr< GStreamerWrapper > GStreamerWrapperRef;
 
 	/*
 		class _2RealGStreamerWrapper
@@ -148,6 +151,19 @@ namespace _2RealGStreamerWrapper
 	class GStreamerWrapper
 	{
 	public:
+        /*
+            Factory that builds a heap-allocated GStreamer
+        */
+        static GStreamerWrapperRef create()
+        { return (GStreamerWrapperRef)(new GStreamerWrapper()); }
+
+        /*
+            Factory that builds a heap-allocated GStreamer, and automatically opens the file provided by the string parameter.
+        */
+        static GStreamerWrapperRef create( std::string strFilename, bool bGenerateVideoBuffer = true, bool bGenerateAudioBuffer = true )
+        { return (GStreamerWrapperRef)(new GStreamerWrapper( strFilename, bGenerateVideoBuffer, bGenerateAudioBuffer )); }
+
+
 		/*
 			Constructor that initializes GStreamer
 		*/
