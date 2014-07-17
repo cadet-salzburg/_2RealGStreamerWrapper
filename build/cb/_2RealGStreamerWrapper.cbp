@@ -33,6 +33,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++11" />
 			<Add option="-Wall" />
 			<Add option="`pkg-config --cflags gstreamer-0.10`" />
 			<Add option="-fPIC" />
