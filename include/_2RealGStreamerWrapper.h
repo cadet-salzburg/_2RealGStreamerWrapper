@@ -340,6 +340,11 @@ namespace _2RealGStreamerWrapper
 		*/
 		unsigned char*			getVideo();
 
+    /*
+      Returns the size of the current Video Buffer
+    */
+    gint64        getVideoBufferSize();
+
 		/*
 			Returns the index of the current video stream
 		*/
@@ -665,6 +670,7 @@ namespace _2RealGStreamerWrapper
 		gint64					m_iNumberOfFrames; /* Total number of frames in media file */
 		gint64					m_iCurrentTimeInNs; /* Current time position in nanoseconds */
 		gint64					m_iDurationInNs; /* Duration of media file in nanoseconds */
+    gint64          m_iVideoBufferSize;
 
 		PlayState				m_CurrentPlayState; /* The current state of the wrapper */
 		PlayDirection			m_PlayDirection; /* The current playback direction */
