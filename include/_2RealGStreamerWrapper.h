@@ -195,7 +195,7 @@ namespace _2RealGStreamerWrapper
 			audio codec of the operating system and play the sound synchronized to the video (or just play the sound if there is no video
 			data)
 		*/
-		bool					open( std::string strFilename, bool bGenerateVideoBuffer = true, bool bGenerateAudioBuffer = true );
+		bool					open( std::string strFilename, bool bGenerateVideoBuffer = true, bool bGenerateAudioBuffer = true, unsigned int iBytesPerPixel = 24  );
 
 		/*
 			Closes the file and frees allocated memory for both video and audio buffers as well as various GStreamer references
@@ -339,6 +339,11 @@ namespace _2RealGStreamerWrapper
 			went wrong while streaming
 		*/
 		unsigned char*			getVideo();
+
+    /*
+      Returns the size of the current Video Buffer
+    */
+    gint64        getVideoBufferSize();
 
 		/*
 			Returns the index of the current video stream
@@ -665,6 +670,7 @@ namespace _2RealGStreamerWrapper
 		gint64					m_iNumberOfFrames; /* Total number of frames in media file */
 		gint64					m_iCurrentTimeInNs; /* Current time position in nanoseconds */
 		gint64					m_iDurationInNs; /* Duration of media file in nanoseconds */
+    gint64          m_iVideoBufferSize;
 
 		PlayState				m_CurrentPlayState; /* The current state of the wrapper */
 		PlayDirection			m_PlayDirection; /* The current playback direction */

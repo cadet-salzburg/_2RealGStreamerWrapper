@@ -152,7 +152,7 @@ GStreamerWrapper::~GStreamerWrapper()
 	close();
 }
 
-bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer, bool bGenerateAudioBuffer )
+bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer, bool bGenerateAudioBuffer, unsigned int iBytesPerPixel )
 {
 	if( m_bFileIsOpen )
 	{
@@ -178,6 +178,7 @@ bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer,
 	m_fFps = 0;
 	m_dDurationInMs = 0;
 	m_iNumberOfFrames = 0;
+  m_iVideoBufferSize = 0;
 
 	m_fVolume = 1.0f;
 	m_fSpeed = 1.0f;
@@ -220,8 +221,10 @@ bool GStreamerWrapper::open( std::string strFilename, bool bGenerateVideoBuffer,
 
 		// Set some fix caps for the video sink
 		// It would seem that GStreamer then tries to transform any incoming video stream according to these caps
+		
+
 		GstCaps* caps = gst_caps_new_simple( "video/x-raw-rgb",
-			"bpp", G_TYPE_INT, 24,
+			"bpp", G_TYPE_INT, iBytesPerPixel,
 			"depth", G_TYPE_INT, 24,
 			"endianness",G_TYPE_INT,4321,
 			"red_mask",G_TYPE_INT,0xff0000,
@@ -557,6 +560,11 @@ unsigned char* GStreamerWrapper::getVideo()
 
 	m_bIsNewVideoFrame = false;
 	return m_cVideoBuffer;
+}
+
+gint64 GStreamerWrapper::getVideoBufferSize()
+{
+	return m_iVideoBufferSize;
 }
 
 int GStreamerWrapper::getCurrentVideoStream()
@@ -980,8 +988,11 @@ void GStreamerWrapper::newVideoSinkPrerollCallback( GstBuffer* videoSinkBuffer )
 		m_cVideoBuffer = new unsigned char[videoBufferSize];
 	}
 
+  // Make the video buffer size available
+  m_iVideoBufferSize = GST_BUFFER_SIZE( videoSinkBuffer );
+
 	// Copy the video appsink buffer data to our unsigned char array
-	memcpy( (unsigned char *)m_cVideoBuffer, (unsigned char *)GST_BUFFER_DATA( videoSinkBuffer ), GST_BUFFER_SIZE( videoSinkBuffer ) );
+	memcpy( (unsigned char *)m_cVideoBuffer, (unsigned char *)GST_BUFFER_DATA( videoSinkBuffer ), m_iVideoBufferSize );
 }
 
 void GStreamerWrapper::newVideoSinkBufferCallback( GstBuffer* videoSinkBuffer )
