@@ -195,7 +195,7 @@ namespace _2RealGStreamerWrapper
 			audio codec of the operating system and play the sound synchronized to the video (or just play the sound if there is no video
 			data)
 		*/
-		bool					open( std::string strFilename, bool bGenerateVideoBuffer = true, bool bGenerateAudioBuffer = true );
+		bool					open( std::string strFilename, bool bGenerateVideoBuffer = true, bool bGenerateAudioBuffer = true, unsigned int iBytesPerPixel = 24  );
 
 		/*
 			Closes the file and frees allocated memory for both video and audio buffers as well as various GStreamer references
